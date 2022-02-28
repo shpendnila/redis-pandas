@@ -24,7 +24,7 @@ def create_dataframe() -> pd.DataFrame:
 
 def store_in_redis(key: str, a_df: pd.DataFrame, redis_client):
     df_compressed = pa.serialize(a_df).to_buffer().to_pybytes()
-    res = redis_client.set(key, df_compressed)
+    res = redis_client.set(key, df_compressed, ex=10)
     if res:
         logger.info(f'{key} cached')
 
