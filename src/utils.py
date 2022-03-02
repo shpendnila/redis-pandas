@@ -22,14 +22,14 @@ def create_dataframe() -> pd.DataFrame:
     )
 
 
-def store_in_redis(key: str, a_df: pd.DataFrame, redis_client):
+def store_df_in_redis(key: str, a_df: pd.DataFrame, redis_client):
     df_compressed = pa.serialize(a_df).to_buffer().to_pybytes()
-    res = redis_client.set(key, df_compressed, ex=10)
+    res = redis_client.set(key, df_compressed, ex=configuration.EX_PRD)
     if res:
         logger.info(f'{key} cached')
 
 
-def load_from_redis(key: str, redis_client) -> pd.DataFrame:
+def load_df_from_redis(key: str, redis_client) -> pd.DataFrame:
     data = redis_client.get(key)
     try:
         return pa.deserialize(data)
